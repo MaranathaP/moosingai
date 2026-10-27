@@ -6,7 +6,7 @@ const DEFAULT_RESOURCES = [
   { id: 5, name: "Suno AI Pro", vendor: "Suno", category: "audio", kind: "subscription", monthlyCost: 10, renewal: "2026-11-12", usagePct: 15, capabilities: ["audio"], notes: "Music generation" },
   { id: 6, name: "GitHub Free", vendor: "GitHub", category: "other", kind: "free-tier", monthlyCost: 0, usagePct: 40, capabilities: ["hosting","automation"], notes: "Repos & Actions" },
   { id: 7, name: "Hostinger Hosting", vendor: "Hostinger", category: "hosting", kind: "subscription", monthlyCost: 0, renewal: "2027-10-01", usagePct: 50, capabilities: ["hosting","domain","email"], notes: "Paid for year, multiple sites" },
-  { id: 8, name: "Stripe", vendor: "Stripe", category: "payments", kind: "free-tier", monthlyCost: 0, usagePct: 0, capabilities: ["payments"], notes: "Connect for Payment Links" }
+  { id: 8, name: "Stripe", vendor: "Stripe", category: "payments", kind: "free-tier", monthlyCost: 0, usagePct: 0, capabilities: ["payments"], notes: "Connected — Payment Links live" }
 ];
 
 const IDEAS = [
@@ -17,9 +17,10 @@ const IDEAS = [
     offer: "Ready-to-use prompt packs + workflow guides for one niche (e.g. realtors, coaches, local shops). Produced with Claude + ChatGPT + Gemini.",
     price: 29,
     speed: 5,
-    revenuePath: "Sell 140 packs = $4,060. Launch on Gumroad or own site with Stripe Payment Link.",
+    revenuePath: "Sell 140 packs = $4,060.",
     tools: ["Claude Pro", "ChatGPT Plus", "Gemini Pro"],
-    firstSteps: "Pick 1 niche today. Generate 20 prompts in Claude. Package PDF + Notion template. Stripe link. Post in 2 relevant communities."
+    firstSteps: "Pick 1 niche today. Generate 20 prompts in Claude. Package PDF + Notion template. Post in 2 relevant communities.",
+    paymentLink: "https://buy.stripe.com/dRm14o6Wg1jPeUYcPx5wI00"
   },
   {
     title: "Done-With-You AI Setup Session (30-min)",
@@ -28,9 +29,10 @@ const IDEAS = [
     offer: "Live 30-min session + written playbook tailored to their business using your full stack.",
     price: 99,
     speed: 5,
-    revenuePath: "40 sessions = $3,960. Book via Calendly + Stripe.",
+    revenuePath: "40 sessions = $3,960.",
     tools: ["All LLMs", "Grok Bot"],
-    firstSteps: "Write session outline. Create Stripe Payment Link. Offer 5 free discovery calls in LinkedIn/local groups."
+    firstSteps: "Write session outline. Offer 5 free discovery calls in LinkedIn/local groups.",
+    paymentLink: "https://buy.stripe.com/8x26oI80k1jPfZ2g1J5wI01"
   },
   {
     title: "Agent-Ready Micro API / Data Utility",
@@ -91,7 +93,7 @@ function renderDashboard() {
     <div class="card">
       <h3>Top Actions</h3>
       <ol>
-        <li>Pick the highest-speed idea below and launch a Stripe Payment Link today.</li>
+        <li>Pick the highest-speed idea below and share its Stripe Payment Link today.</li>
         <li>Update usage % for each tool after this week's sessions.</li>
         <li>Log every sale in the Ledger so the dashboard stays honest.</li>
         <li>Use under-used tools (Suno, Grok) on the chosen venture this week.</li>
@@ -130,7 +132,8 @@ function renderIdeas() {
       <p><strong>Price:</strong> $${idea.price} &nbsp; <strong>Path:</strong> ${idea.revenuePath}</p>
       <p><strong>Tools:</strong> ${idea.tools.join(", ")}</p>
       <p><strong>First steps:</strong> ${idea.firstSteps}</p>
-      <button class="primary" onclick="startSprint(${i})">Start 10-day Sprint</button>
+      ${idea.paymentLink ? `<p><a href="${idea.paymentLink}" target="_blank" class="primary" style="display:inline-block;text-decoration:none;margin-top:0.5rem">Buy Now — $${idea.price}</a></p>` : ""}
+      <button class="primary" onclick="startSprint(${i})" style="margin-top:0.5rem">Start 10-day Sprint</button>
     </div>`).join("")}</div>`;
 }
 
@@ -139,7 +142,7 @@ function renderSprints() {
     <ol>
       <li><strong>Days 1-2 Validate:</strong> Talk to 10 potential buyers. Get 3 pre-orders or clear "I would pay" signals. Kill if none.</li>
       <li><strong>Days 3-6 Build:</strong> Use Claude/ChatGPT/Gemini to produce the asset or service materials. Host on Hostinger if needed.</li>
-      <li><strong>Days 7-8 Launch:</strong> Stripe Payment Link + simple landing page. Post in 3 communities where buyers already are.</li>
+      <li><strong>Days 7-8 Launch:</strong> Share the Stripe Payment Link + simple landing page. Post in 3 communities where buyers already are.</li>
       <li><strong>Days 9-10 Learn:</strong> Log results in Ledger. Double down or kill based on real sales.</li>
     </ol>
     <p>All work stays inside existing subscriptions. No new spend required.</p>
