@@ -61,12 +61,25 @@ const IDEAS = [
 let state = {
   resources: JSON.parse(localStorage.getItem("moosing_resources")) || DEFAULT_RESOURCES,
   ledger: JSON.parse(localStorage.getItem("moosing_ledger")) || [],
-  activeTab: "dashboard"
+  activeTab: "dashboard",
+  search: ""
 };
 
 function save() {
   localStorage.setItem("moosing_resources", JSON.stringify(state.resources));
   localStorage.setItem("moosing_ledger", JSON.stringify(state.ledger));
+  updateProgress();
+}
+
+function updateProgress() {
+  const revenue = state.ledger.filter(e => e.type === "revenue").reduce((s, e) => s + e.amount, 0);
+  const pct = Math.min(100, Math.round((revenue / 4000) * 100));
+  const bar = document.querySelector(".progress-fill");
+  const span = document.querySelector(".progress-bar span");
+  if (bar && span) {
+    bar.style.width = pct + "%";
+    span.textContent = pct + "% of $4,000";
+  }
 }
 
 function render() {
@@ -77,46 +90,67 @@ function render() {
   else if (state.activeTab === "ideas") main.innerHTML = renderIdeas();
   else if (state.activeTab === "sprints") main.innerHTML = renderSprints();
   else if (state.activeTab === "ledger") main.innerHTML = renderLedger();
+  updateProgress();
 }
 
 function renderDashboard() {
   const totalCost = state.resources.reduce((s, r) => s + (r.monthlyCost || 0), 0);
-  const avgUsage = Math.round(state.resources.reduce((s, r) => s + (r.usagePct || 0), 0) / state.resources.length);
+  const avgUsage = Math.round(state.resources.reduce((s, r) => s + (r.usagePct || 0), 0) / Math.max(1, state.resources.length));
   const revenue = state.ledger.filter(e => e.type === "revenue").reduce((s, e) => s + e.amount, 0);
+  const underused = state.resources.filter(r => (r.usagePct || 0) < 30).map(r => r.name).join(", ") || "None";
   return `
     <div class="grid">
       <div class="card"><h3>Monthly AI Spend</h3><p style="font-size:2rem;margin:0">$${totalCost}</p></div>
       <div class="card"><h3>Avg Usage</h3><p style="font-size:2rem;margin:0">${avgUsage}%</p></div>
-      <div class="card"><h3>Tracked Revenue</h3><p style="font-size:2rem;margin:0">$${revenue}</p></div>
-      <div class="card"><h3>Goal</h3><p style="font-size:2rem;margin:0">$4,000 / 30d</p></div>
+      <div class="card"><h3>Tracked Revenue</h3><p style="font-size:2rem;margin:0">$${revenue.toFixed(0)}</p></div>
+      <div class="card"><h3>Days Left</h3><p style="font-size:2rem;margin:0">30</p></div>
+    </div>
+    <div class="card">
+      <h3>Insights</h3>
+      <p><strong>Under-used tools:</strong> ${underused}</p>
+      <p><strong>Highest-speed ideas:</strong> Content Packs ($29) and Setup Sessions ($99)</p>
     </div>
     <div class="card">
       <h3>Top Actions</h3>
       <ol>
-        <li>Pick the highest-speed idea below and share its Stripe Payment Link today.</li>
+        <li>Share a Stripe Payment Link from Revenue Ideas today.</li>
         <li>Update usage % for each tool after this week's sessions.</li>
         <li>Log every sale in the Ledger so the dashboard stays honest.</li>
-        <li>Use under-used tools (Suno, Grok) on the chosen venture this week.</li>
+        <li>Use under-used tools on the chosen venture this week.</li>
       </ol>
     </div>
   `;
 }
 
 function renderInventory() {
-  let rows = state.resources.map(r => `
+  const filtered = state.resources.filter(r =>
+    !state.search || r.name.toLowerCase().includes(state.search.toLowerCase()) ||
+    r.vendor.toLowerCase().includes(state.search.toLowerCase())
+  );
+  let rows = filtered.map(r => `
     <tr>
       <td>${r.name}</td>
       <td>${r.vendor}</td>
       <td>$${r.monthlyCost || 0}</td>
       <td>${r.renewal || "—"}</td>
-      <td>${r.usagePct || 0}%</td>
-      <td><button onclick="editResource(${r.id})">Edit</button></td>
+      <td>
+        ${r.usagePct || 0}%
+        <div class="usage-bar"><div class="usage-fill" style="width:${r.usagePct || 0}%"></div></div>
+      </td>
+      <td class="actions">
+        <button onclick="editResource(${r.id})">Edit</button>
+        <button onclick="deleteResource(${r.id})">Del</button>
+      </td>
     </tr>`).join("");
   return `
     <div class="card">
       <h3>AI & Hosting Resources</h3>
-      <table><thead><tr><th>Name</th><th>Vendor</th><th>Cost</th><th>Renewal</th><th>Usage</th><th></th></tr></thead>
-      <tbody>${rows}</tbody></table>
+      <div class="search">
+        <input type="text" placeholder="Search name or vendor..." value="${state.search}" oninput="state.search=this.value;render()">
+        <button class="primary export-btn" onclick="exportData()">Export JSON</button>
+      </div>
+      <table><thead><tr><th>Name</th><th>Vendor</th><th>Cost</th><th>Renewal</th><th>Usage</th><th>Actions</th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="6">No matches</td></tr>'}</tbody></table>
       <button class="primary" onclick="addResource()">+ Add Resource</button>
     </div>
   `;
@@ -132,8 +166,10 @@ function renderIdeas() {
       <p><strong>Price:</strong> $${idea.price} &nbsp; <strong>Path:</strong> ${idea.revenuePath}</p>
       <p><strong>Tools:</strong> ${idea.tools.join(", ")}</p>
       <p><strong>First steps:</strong> ${idea.firstSteps}</p>
-      ${idea.paymentLink ? `<p><a href="${idea.paymentLink}" target="_blank" class="primary" style="display:inline-block;text-decoration:none;margin-top:0.5rem">Buy Now — $${idea.price}</a></p>` : ""}
-      <button class="primary" onclick="startSprint(${i})" style="margin-top:0.5rem">Start 10-day Sprint</button>
+      <div class="actions">
+        ${idea.paymentLink ? `<a href="${idea.paymentLink}" target="_blank" class="primary">Buy Now — $${idea.price}</a>` : ""}
+        <button class="primary" onclick="startSprint(${i})">Start 10-day Sprint</button>
+      </div>
     </div>`).join("")}</div>`;
 }
 
@@ -146,19 +182,22 @@ function renderSprints() {
       <li><strong>Days 9-10 Learn:</strong> Log results in Ledger. Double down or kill based on real sales.</li>
     </ol>
     <p>All work stays inside existing subscriptions. No new spend required.</p>
+    <button class="primary" onclick="state.activeTab='ideas';render()">Back to Ideas</button>
   </div>`;
 }
 
 function renderLedger() {
-  let rows = state.ledger.map(e => `<tr><td>${e.date}</td><td>${e.type}</td><td>$${e.amount}</td><td>${e.note || ""}</td></tr>`).join("");
+  let rows = state.ledger.map((e, i) => `<tr><td>${e.date}</td><td>${e.type}</td><td>$${e.amount}</td><td>${e.note || ""}</td><td><button onclick="deleteLedger(${i})">Del</button></td></tr>`).join("");
   return `<div class="card"><h3>Ledger</h3>
-    <table><thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Note</th></tr></thead><tbody>${rows}</tbody></table>
+    <table><thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Note</th><th></th></tr></thead><tbody>${rows || '<tr><td colspan="5">No entries yet</td></tr>'}</tbody></table>
     <form onsubmit="addLedger(event)">
       <select name="type"><option>revenue</option><option>cost</option></select>
       <input name="amount" type="number" step="0.01" placeholder="Amount" required>
       <input name="note" placeholder="Note / source">
       <button class="primary">Add Entry</button>
-    </form></div>`;
+    </form>
+    <button class="primary" onclick="exportData()" style="margin-top:0.5rem">Export All Data</button>
+  </div>`;
 }
 
 function addLedger(e) {
@@ -166,6 +205,13 @@ function addLedger(e) {
   const f = e.target;
   state.ledger.push({ date: new Date().toISOString().slice(0,10), type: f.type.value, amount: parseFloat(f.amount.value), note: f.note.value });
   save(); render();
+}
+
+function deleteLedger(i) {
+  if (confirm("Delete this entry?")) {
+    state.ledger.splice(i, 1);
+    save(); render();
+  }
 }
 
 function startSprint(i) {
@@ -185,10 +231,28 @@ function editResource(id) {
   const r = state.resources.find(x => x.id === id);
   if (!r) return;
   const usage = prompt("Usage % (0-100)", r.usagePct);
-  if (usage !== null) r.usagePct = parseInt(usage) || 0;
+  if (usage !== null) r.usagePct = Math.min(100, Math.max(0, parseInt(usage) || 0));
   const cost = prompt("Monthly cost $", r.monthlyCost);
   if (cost !== null) r.monthlyCost = parseFloat(cost) || 0;
+  const renewal = prompt("Renewal date (YYYY-MM-DD)", r.renewal || "");
+  if (renewal !== null) r.renewal = renewal;
   save(); render();
+}
+
+function deleteResource(id) {
+  if (confirm("Delete this resource?")) {
+    state.resources = state.resources.filter(r => r.id !== id);
+    save(); render();
+  }
+}
+
+function exportData() {
+  const data = { resources: state.resources, ledger: state.ledger, exported: new Date().toISOString() };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "moosingai-data.json";
+  a.click();
 }
 
 document.querySelectorAll("nav button").forEach(b => {
@@ -196,3 +260,4 @@ document.querySelectorAll("nav button").forEach(b => {
 });
 
 render();
+updateProgress();
