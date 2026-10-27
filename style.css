@@ -4,6 +4,8 @@
   --accent: #38bdf8;
   --text: #f1f5f9;
   --muted: #94a3b8;
+  --success: #22c55e;
+  --warning: #eab308;
 }
 * { box-sizing: border-box; }
 body {
@@ -15,7 +17,29 @@ body {
 }
 header { padding: 1.5rem; background: var(--card); border-bottom: 1px solid #334155; }
 header h1 { margin: 0; color: var(--accent); }
-nav { display: flex; gap: 0.5rem; padding: 0.75rem; background: #1e293b; flex-wrap: wrap; }
+.progress-bar {
+  height: 24px;
+  background: #334155;
+  border-radius: 12px;
+  margin-top: 0.75rem;
+  position: relative;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.3s;
+}
+.progress-bar span {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+nav { display: flex; gap: 0.5rem; padding: 0.75rem; background: #1e293b; flex-wrap: wrap; position: sticky; top: 0; z-index: 10; }
 nav button {
   background: transparent;
   border: 1px solid #475569;
@@ -23,6 +47,7 @@ nav button {
   padding: 0.5rem 1rem;
   border-radius: 6px;
   cursor: pointer;
+  font-size: 0.95rem;
 }
 nav button.active { background: var(--accent); color: #0f172a; border-color: var(--accent); }
 main { padding: 1.5rem; max-width: 1100px; margin: 0 auto; }
@@ -45,8 +70,28 @@ input, select, textarea {
   color: var(--text);
   border-radius: 4px;
 }
-button.primary { background: var(--accent); color: #0f172a; border: none; padding: 0.6rem 1.2rem; border-radius: 6px; cursor: pointer; font-weight: 600; }
+button.primary, a.primary {
+  background: var(--accent);
+  color: #0f172a;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-block;
+  margin: 0.25rem 0;
+}
 .badge { display: inline-block; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; background: #334155; }
 .high { background: #166534; }
 .med { background: #854d0e; }
 .low { background: #7f1d1d; }
+.usage-bar { height: 8px; background: #334155; border-radius: 4px; margin-top: 4px; }
+.usage-fill { height: 100%; background: var(--accent); border-radius: 4px; }
+.actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem; }
+.search { margin-bottom: 1rem; }
+.export-btn { margin-left: 0.5rem; }
+@media (max-width: 600px) {
+  nav { flex-direction: column; }
+  .grid { grid-template-columns: 1fr; }
+}
