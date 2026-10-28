@@ -63,7 +63,9 @@ const IDEAS = [
     oneLiner: "Ready-to-use prompt packs + short workflow guides for one niche (e.g., realtor follow-up sequence, coach content calendar).",
     price: "$29–79 per pack",
     revenueRange: "50–100 packs/mo ≈ $1,500–4,000",
-    speedReason: "Digital product; can be created in a day with existing LLMs and sold via Stripe/Gumroad."
+    speedReason: "Digital product; can be created in a day with existing LLMs and sold via Stripe/Gumroad.",
+    paymentLink: "https://buy.stripe.com/dRm14o6Wg1jPeUYcPx5wI00",
+    paymentLabel: "Buy AI Content Pack — $29"
   }
 ];
 
@@ -171,6 +173,7 @@ function renderIdeas() {
         <p class="price">${idea.price} · ${idea.revenueRange}</p>
         <p class="meta">${idea.speedReason}</p>
         <div class="actions">
+          ${idea.paymentLink ? `<a href="${idea.paymentLink}" target="_blank" rel="noopener" class="primary">${idea.paymentLabel}</a>` : ""}
           <button class="primary" onclick="togglePlan('${idea.id}')">${isOpen ? "Hide Plan" : "Generate Plan"}</button>
           <button class="secondary" onclick="saveIdea('${idea.id}')">${state.saved.includes(idea.id) ? "Saved" : "Save"}</button>
         </div>
