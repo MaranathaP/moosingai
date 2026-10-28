@@ -3,23 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MoosingAI – AI Resource Maximizer</title>
+<title>MoosingAI – Revenue Idea Engine</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header>
-  <h1>MoosingAI</h1>
-  <p>Inventory your AI tools. Maximize usage. Build revenue fast.</p>
-  <div id="goal-progress" class="progress-bar"><div class="progress-fill" style="width:0%"></div><span>0% of $4,000</span></div>
+  <div class="container">
+    <h1>MoosingAI</h1>
+    <p class="tagline">Small problems. Fast revenue. Sorted by speed.</p>
+    <div class="scan-meta">Last scan of Reddit & X: <strong>28 Oct 2026</strong> · Ideas ranked by revenue speed</div>
+  </div>
 </header>
+
 <nav>
-  <button data-tab="dashboard" class="active">Dashboard</button>
-  <button data-tab="inventory">Inventory</button>
-  <button data-tab="ideas">Revenue Ideas</button>
-  <button data-tab="sprints">Sprints</button>
-  <button data-tab="ledger">Ledger</button>
+  <div class="container">
+    <button data-view="ideas" class="active">Top Ideas</button>
+    <button data-view="saved">Saved Plans</button>
+    <button data-view="about">How It Works</button>
+  </div>
 </nav>
-<main id="app"></main>
+
+<main id="app" class="container"></main>
+
 <script src="app.js"></script>
 </body>
 </html>

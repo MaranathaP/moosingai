@@ -1,263 +1,256 @@
-const DEFAULT_RESOURCES = [
-  { id: 1, name: "Claude Pro", vendor: "Anthropic", category: "llm", kind: "subscription", monthlyCost: 20, renewal: "2026-11-15", usagePct: 45, capabilities: ["code-gen","chat-writing","research"], notes: "Primary reasoning & long context" },
-  { id: 2, name: "ChatGPT Plus", vendor: "OpenAI", category: "llm", kind: "subscription", monthlyCost: 20, renewal: "2026-11-10", usagePct: 60, capabilities: ["chat-writing","research","image-gen"], notes: "Strong for everyday + DALL-E" },
-  { id: 3, name: "Grok SuperGrok / X Premium", vendor: "xAI", category: "llm", kind: "subscription", monthlyCost: 30, renewal: "2026-11-20", usagePct: 30, capabilities: ["chat-writing","research","automation"], notes: "Includes Grok Bot" },
-  { id: 4, name: "Gemini Pro", vendor: "Google", category: "llm", kind: "subscription", monthlyCost: 20, renewal: "2026-11-05", usagePct: 25, capabilities: ["research","chat-writing","multimodal"], notes: "Great for Google ecosystem" },
-  { id: 5, name: "Suno AI Pro", vendor: "Suno", category: "audio", kind: "subscription", monthlyCost: 10, renewal: "2026-11-12", usagePct: 15, capabilities: ["audio"], notes: "Music generation" },
-  { id: 6, name: "GitHub Free", vendor: "GitHub", category: "other", kind: "free-tier", monthlyCost: 0, usagePct: 40, capabilities: ["hosting","automation"], notes: "Repos & Actions" },
-  { id: 7, name: "Hostinger Hosting", vendor: "Hostinger", category: "hosting", kind: "subscription", monthlyCost: 0, renewal: "2027-10-01", usagePct: 50, capabilities: ["hosting","domain","email"], notes: "Paid for year, multiple sites" },
-  { id: 8, name: "Stripe", vendor: "Stripe", category: "payments", kind: "free-tier", monthlyCost: 0, usagePct: 0, capabilities: ["payments"], notes: "Connected — Payment Links live" }
-];
-
 const IDEAS = [
   {
-    title: "AI Multi-Model Content Packs for Niches",
-    type: "digital-product",
-    problem: "Creators and small businesses spend hours prompting across tools for consistent output.",
-    offer: "Ready-to-use prompt packs + workflow guides for one niche (e.g. realtors, coaches, local shops). Produced with Claude + ChatGPT + Gemini.",
-    price: 29,
-    speed: 5,
-    revenuePath: "Sell 140 packs = $4,060.",
-    tools: ["Claude Pro", "ChatGPT Plus", "Gemini Pro"],
-    firstSteps: "Pick 1 niche today. Generate 20 prompts in Claude. Package PDF + Notion template. Post in 2 relevant communities.",
-    paymentLink: "https://buy.stripe.com/dRm14o6Wg1jPeUYcPx5wI00"
+    id: "invoice-chase",
+    title: "Late Invoice Chase Automation",
+    score: 9.5,
+    sources: "Reddit r/smallbusiness, X, multiple AR automation write-ups",
+    problem: "Small business owners spend ~14 hours a month chasing unpaid invoices. They feel awkward following up, so cash sits unpaid. Average small business is owed thousands in overdue invoices.",
+    oneLiner: "AI drafts timed, polite-to-firm reminder emails (or SMS) for overdue invoices. Owner approves before anything is sent.",
+    price: "$150–300 setup + $300–500/mo per client",
+    revenueRange: "5 clients ≈ $2,000/mo",
+    speedReason: "Clear pain, immediate ROI (faster cash), can be sold as a service or simple tool with existing LLMs + email/SMS."
   },
   {
-    title: "Done-With-You AI Setup Session (30-min)",
-    type: "service",
-    problem: "Non-technical owners stall on choosing and configuring AI tools.",
-    offer: "Live 30-min session + written playbook tailored to their business using your full stack.",
-    price: 99,
-    speed: 5,
-    revenuePath: "40 sessions = $3,960.",
-    tools: ["All LLMs", "Grok Bot"],
-    firstSteps: "Write session outline. Offer 5 free discovery calls in LinkedIn/local groups.",
-    paymentLink: "https://buy.stripe.com/8x26oI80k1jPfZ2g1J5wI01"
+    id: "missed-calls",
+    title: "Missed Call + Lead Follow-up for Home Services",
+    score: 9.2,
+    sources: "X posts on missed calls for trades, Reddit service business threads",
+    problem: "Plumbers, HVAC, electricians, and realtors lose jobs because they miss calls while on site and fail to follow up on quotes. Leads go cold within hours.",
+    oneLiner: "AI answers missed calls or instantly texts back, qualifies the lead, books a slot or sends a quote template. Optional bilingual support.",
+    price: "$200–400 setup + $200–400/mo per business",
+    revenueRange: "6–8 clients ≈ $1,800–3,200/mo",
+    speedReason: "High willingness to pay in trades; simple SMS/voice flows can be built fast with existing AI tools."
   },
   {
-    title: "Agent-Ready Micro API / Data Utility",
-    type: "api",
-    problem: "Developers and agents need clean structured answers without scraping.",
-    offer: "Simple pay-per-call JSON endpoint (e.g. niche research summary). Host on Hostinger Node.",
-    price: 0.01,
-    speed: 3,
-    revenuePath: "400k calls = $4k (or prepaid credits). Start with one high-value endpoint.",
-    tools: ["Claude Pro", "Hostinger", "Stripe"],
-    firstSteps: "Define one endpoint. Build minimal Express route. Stripe meter or prepaid credits."
+    id: "faq-agent",
+    title: "Approval-First FAQ / Support Agent",
+    score: 8.7,
+    sources: "r/smallbusiness, r/SideProject, X on AI agents",
+    problem: "Owners answer the same 5–10 customer questions daily. They distrust fully autonomous AI that might send wrong info or damage relationships.",
+    oneLiner: "AI drafts replies to common questions (orders, hours, pricing, returns). Owner reviews and approves in one click before send.",
+    price: "$100–250 setup + $150–300/mo",
+    revenueRange: "8 clients ≈ $1,600–2,400/mo",
+    speedReason: "Low technical bar, high trust model (approval-first), easy to demo with any LLM."
   },
   {
-    title: "Suno-Powered Niche Audio Assets",
-    type: "digital-product",
-    problem: "Podcasters and video creators need custom intros, beds, and stings fast.",
-    offer: "Pack of 10 commercial-ready tracks + stems for one vertical.",
-    price: 49,
-    speed: 4,
-    revenuePath: "82 packs = $4,018. Check Suno commercial terms carefully.",
-    tools: ["Suno AI Pro"],
-    firstSteps: "Generate 5 test tracks. Confirm license. Package and list."
+    id: "local-visibility",
+    title: "Local Shop Visibility Pack",
+    score: 8.4,
+    sources: "Reddit local business threads, X on Google Business & AI visibility",
+    problem: "Small local shops (salons, tire shops, restaurants, contractors) have weak Google Business profiles, slow review responses, and no consistent content. They lose local search traffic.",
+    oneLiner: "Done-with-you pack: optimized Google Business Profile, review response templates, and 30 days of social/content posts generated with AI.",
+    price: "$99–199 one-time or $99/mo retainer",
+    revenueRange: "20 packs/mo ≈ $2,000+",
+    speedReason: "Productized service; can be delivered with Claude/ChatGPT + free Google tools. Easy to post in local groups."
+  },
+  {
+    id: "doc-extraction",
+    title: "Vendor Invoice & Document Data Extraction",
+    score: 8.0,
+    sources: "r/smallbusiness (SKU/invoice complaints), contractor case studies",
+    problem: "Businesses drown in messy vendor invoices, paper catalogs, and emails. Manual entry into accounting systems takes hours and introduces errors.",
+    oneLiner: "AI + OCR extracts line items, amounts, tax IDs, and job numbers from invoices/PDFs and drops structured data into a sheet or accounting tool.",
+    price: "$250–500 setup + $150–300/mo",
+    revenueRange: "5–6 clients ≈ $1,200–1,800/mo",
+    speedReason: "Proven time savings (5–6 hrs/week reported); can start with Claude vision or simple scripts."
+  },
+  {
+    id: "niche-packs",
+    title: "Vertical Workflow & Prompt Packs",
+    score: 7.5,
+    sources: "Reddit creator/coach threads, previous MoosingAI ideas",
+    problem: "Realtors, coaches, and local service providers waste hours writing the same follow-ups, listing descriptions, or content from scratch.",
+    oneLiner: "Ready-to-use prompt packs + short workflow guides for one niche (e.g., realtor follow-up sequence, coach content calendar).",
+    price: "$29–79 per pack",
+    revenueRange: "50–100 packs/mo ≈ $1,500–4,000",
+    speedReason: "Digital product; can be created in a day with existing LLMs and sold via Stripe/Gumroad."
   }
 ];
 
-let state = {
-  resources: JSON.parse(localStorage.getItem("moosing_resources")) || DEFAULT_RESOURCES,
-  ledger: JSON.parse(localStorage.getItem("moosing_ledger")) || [],
-  activeTab: "dashboard",
-  search: ""
+const PLANS = {
+  "invoice-chase": {
+    solution: "Build a simple workflow: client pastes or uploads open invoices (CSV/PDF). AI classifies by days overdue, selects tone (friendly → firm), and drafts a personalized reminder email or SMS with a payment link. Owner reviews the batch once a week and hits approve/send. Can run via email forwarding + Claude/ChatGPT or a lightweight n8n/Zapier flow.",
+    expectedRevenue: "Setup $150–300 + $300–500/month per client. Target 5 clients in 30 days = ~$2,000 recurring. Upsell to voice follow-ups or QuickBooks/Xero integration later.",
+    pathToMarket: "Productize as a 'Monday Invoice Chase' service. Offer a 15-minute free audit of their current AR process. Deliver the first week of drafts as a paid pilot ($150).",
+    clientAcquisition: "Post in r/smallbusiness, Facebook groups for freelancers/contractors, and local Chambers. Cold DM or email bookkeepers and virtual assistants who already serve multiple clients. Offer white-label to agencies. LinkedIn: 'I help trades and agencies get paid 5–7 days faster without awkward calls.'",
+    timeline: "Day 1–2: Build template prompts and a Google Sheet intake form. Day 3–5: Run pilot with 1–2 friendly businesses. Day 6–10: Package offer, create Stripe Payment Link, post in 3 communities. Day 11–30: Close 4–5 clients.",
+    tools: "Claude Pro or ChatGPT Plus for drafting, Google Sheets or Airtable for tracking, Stripe for payments, optional n8n/Zapier for automation.",
+    first7Days: "1. Write 4 reminder templates (due date, 7 days late, 14 days, 30 days). 2. Create a simple intake form. 3. Offer free 'invoice health check' to 10 people in relevant groups. 4. Close first paid pilot.",
+    risks: "Clients may already have basic reminders in QuickBooks. Differentiate with AI-personalized tone + approval workflow + weekly summary. Some owners still want to handle high-value clients manually."
+  },
+  "missed-calls": {
+    solution: "For home-service businesses: when a call is missed, an AI instantly sends an SMS ('Sorry I missed you — what's the job and when works?') and qualifies the lead. Optionally connect a simple AI voice agent or just a callback scheduling link. For realtors: same for inbound leads.",
+    expectedRevenue: "$200–400 setup + $200–400/mo. 6–8 clients = $1,800–3,200/mo. High retention because lost jobs are visible and painful.",
+    pathToMarket: "Sell as 'Never Miss a Lead Again' package. Start with SMS-only (easiest), add voice later. Partner with local marketing agencies that already serve trades.",
+    clientAcquisition: "Target Facebook groups and Nextdoor for local trades. Offer free missed-call audit. Post case-style content on X and LinkedIn. Door-to-door or in-person at contractor breakfasts if local. Use Reddit r/Plumbing, r/HVAC, etc.",
+    timeline: "Week 1: Build SMS flow with Twilio or simple Make.com + Claude. Week 2: Pilot with 1–2 businesses. Week 3–4: Scale outreach and close 5+.",
+    tools: "Claude/ChatGPT for message logic, Twilio or similar for SMS, Stripe, optional Calendly.",
+    first7Days: "1. Draft the SMS sequence. 2. Find 5 local trades on Google and message them. 3. Offer a free 7-day trial of the SMS reply system.",
+    risks: "Regulatory (TCPA for SMS). Keep it opt-in and business-related. Competition from existing answering services; emphasize AI speed + lower cost."
+  },
+  "faq-agent": {
+    solution: "Collect the 10 most common customer questions. AI drafts replies in the brand voice. Owner gets a daily or real-time queue to approve/edit/send. Can start as a shared inbox + Claude and evolve into a lightweight web dashboard.",
+    expectedRevenue: "$100–250 setup + $150–300/mo. Easy to reach 8 clients for ~$2k/mo. Low churn if it saves real time.",
+    pathToMarket: "Position as 'AI that drafts, you approve.' Sell to e-commerce stores, service businesses, and coaches. Start with email/SMS only.",
+    clientAcquisition: "Reddit r/shopify, r/smallbusiness, Facebook ecom groups. Offer to audit their last 50 support emails for free and show the draft replies.",
+    timeline: "Days 1–3: Build prompt templates and a simple approval sheet. Days 4–7: Pilot. Days 8–21: Outreach and close.",
+    tools: "Claude Pro / ChatGPT Plus, Google Sheets or Notion for the approval queue, Stripe.",
+    first7Days: "1. Create the approval workflow in a sheet. 2. Reach out to 10 small ecom or service owners. 3. Deliver one free sample day of drafts.",
+    risks: "Owners may still prefer to answer personally. Emphasize time savings on repetitive questions only. Keep human in the loop to maintain trust."
+  },
+  "local-visibility": {
+    solution: "Done-with-you or productized: optimize Google Business Profile (photos, services, posts), create review-response templates, and generate 30 days of social content tailored to the shop. Deliver as a PDF + live profile updates.",
+    expectedRevenue: "$99–199 per pack or $99/mo retainer. 20 one-time packs = $2,000+. Retainers compound.",
+    pathToMarket: "Productize hard. Create a simple landing page. Sell via local Facebook groups, Nextdoor, and direct outreach to shops with weak profiles.",
+    clientAcquisition: "Search Google Maps for businesses with <10 reviews or incomplete profiles. Message owners. Post in city-specific Facebook groups. Partner with local web designers.",
+    timeline: "Day 1: Build template. Days 2–5: Deliver 3 free or discounted pilots for testimonials. Days 6–30: Sell 15–20 packs.",
+    tools: "Claude/ChatGPT/Gemini for content, free Google Business tools, Canva optional, Stripe.",
+    first7Days: "1. Pick one city. 2. Find 20 shops with weak profiles. 3. Offer a free profile audit + sample posts. 4. Close first 3 paid.",
+    risks: "Some owners ignore Google. Focus on those already complaining about slow business. Keep delivery fast so it feels effortless."
+  },
+  "doc-extraction": {
+    solution: "Client forwards invoices or uploads PDFs. AI extracts vendor, amount, line items, dates, and job codes into a structured Google Sheet or CSV ready for QuickBooks/Xero import. Human reviews edge cases.",
+    expectedRevenue: "$250–500 setup + $150–300/mo. 5–6 clients = solid $1,200–1,800/mo with room to grow.",
+    pathToMarket: "Target contractors, agencies, and anyone with high invoice volume. Sell the time savings (5+ hours/week).",
+    clientAcquisition: "Reddit contractor and bookkeeping communities. LinkedIn outreach to operations managers. Offer a free sample extraction of 10 invoices.",
+    timeline: "Week 1: Build extraction prompts and sheet template. Week 2: Pilot. Weeks 3–4: Close clients.",
+    tools: "Claude (vision) or ChatGPT, Google Sheets, optional simple script, Stripe.",
+    first7Days: "1. Create the extraction prompt and output template. 2. Process 5 sample invoices publicly as proof. 3. Reach out to 10 contractors.",
+    risks: "Accuracy on messy scans. Always include a human review step. Some accounting software already has basic OCR."
+  },
+  "niche-packs": {
+    solution: "Pick one niche (realtors, coaches, local shops). Generate 20–40 high-quality prompts + a short workflow guide (PDF or Notion). Sell as a digital download with optional setup call.",
+    expectedRevenue: "$29–79 per pack. 50–100 sales/mo is realistic with consistent posting = $1,500–4,000.",
+    pathToMarket: "Create the pack in one day. List on Gumroad or own Stripe page. Drive traffic from Reddit, X, and niche Facebook groups.",
+    clientAcquisition: "Post the first 5 prompts for free in relevant communities. Use the engagement to sell the full pack. Run simple X threads.",
+    timeline: "Day 1: Choose niche and generate pack. Day 2: Package and set up Stripe. Days 3–30: Post daily and sell.",
+    tools: "Claude + ChatGPT + Gemini for generation, Stripe or Gumroad, simple landing page on Hostinger.",
+    first7Days: "1. Generate the pack. 2. Create payment link. 3. Post free samples in 3 communities. 4. Collect first sales.",
+    risks: "Digital products require consistent distribution. Quality must be high or refunds rise. Start with one niche and iterate."
+  }
 };
 
-function save() {
-  localStorage.setItem("moosing_resources", JSON.stringify(state.resources));
-  localStorage.setItem("moosing_ledger", JSON.stringify(state.ledger));
-  updateProgress();
-}
+let state = {
+  view: "ideas",
+  openPlan: null,
+  saved: JSON.parse(localStorage.getItem("moosing_saved") || "[]")
+};
 
-function updateProgress() {
-  const revenue = state.ledger.filter(e => e.type === "revenue").reduce((s, e) => s + e.amount, 0);
-  const pct = Math.min(100, Math.round((revenue / 4000) * 100));
-  const bar = document.querySelector(".progress-fill");
-  const span = document.querySelector(".progress-bar span");
-  if (bar && span) {
-    bar.style.width = pct + "%";
-    span.textContent = pct + "% of $4,000";
-  }
+function saveState() {
+  localStorage.setItem("moosing_saved", JSON.stringify(state.saved));
 }
 
 function render() {
   const main = document.getElementById("app");
-  document.querySelectorAll("nav button").forEach(b => b.classList.toggle("active", b.dataset.tab === state.activeTab));
-  if (state.activeTab === "dashboard") main.innerHTML = renderDashboard();
-  else if (state.activeTab === "inventory") main.innerHTML = renderInventory();
-  else if (state.activeTab === "ideas") main.innerHTML = renderIdeas();
-  else if (state.activeTab === "sprints") main.innerHTML = renderSprints();
-  else if (state.activeTab === "ledger") main.innerHTML = renderLedger();
-  updateProgress();
-}
+  document.querySelectorAll("nav button").forEach(b => {
+    b.classList.toggle("active", b.dataset.view === state.view);
+  });
 
-function renderDashboard() {
-  const totalCost = state.resources.reduce((s, r) => s + (r.monthlyCost || 0), 0);
-  const avgUsage = Math.round(state.resources.reduce((s, r) => s + (r.usagePct || 0), 0) / Math.max(1, state.resources.length));
-  const revenue = state.ledger.filter(e => e.type === "revenue").reduce((s, e) => s + e.amount, 0);
-  const underused = state.resources.filter(r => (r.usagePct || 0) < 30).map(r => r.name).join(", ") || "None";
-  return `
-    <div class="grid">
-      <div class="card"><h3>Monthly AI Spend</h3><p style="font-size:2rem;margin:0">$${totalCost}</p></div>
-      <div class="card"><h3>Avg Usage</h3><p style="font-size:2rem;margin:0">${avgUsage}%</p></div>
-      <div class="card"><h3>Tracked Revenue</h3><p style="font-size:2rem;margin:0">$${revenue.toFixed(0)}</p></div>
-      <div class="card"><h3>Days Left</h3><p style="font-size:2rem;margin:0">30</p></div>
-    </div>
-    <div class="card">
-      <h3>Insights</h3>
-      <p><strong>Under-used tools:</strong> ${underused}</p>
-      <p><strong>Highest-speed ideas:</strong> Content Packs ($29) and Setup Sessions ($99)</p>
-    </div>
-    <div class="card">
-      <h3>Top Actions</h3>
-      <ol>
-        <li>Share a Stripe Payment Link from Revenue Ideas today.</li>
-        <li>Update usage % for each tool after this week's sessions.</li>
-        <li>Log every sale in the Ledger so the dashboard stays honest.</li>
-        <li>Use under-used tools on the chosen venture this week.</li>
-      </ol>
-    </div>
-  `;
-}
-
-function renderInventory() {
-  const filtered = state.resources.filter(r =>
-    !state.search || r.name.toLowerCase().includes(state.search.toLowerCase()) ||
-    r.vendor.toLowerCase().includes(state.search.toLowerCase())
-  );
-  let rows = filtered.map(r => `
-    <tr>
-      <td>${r.name}</td>
-      <td>${r.vendor}</td>
-      <td>$${r.monthlyCost || 0}</td>
-      <td>${r.renewal || "—"}</td>
-      <td>
-        ${r.usagePct || 0}%
-        <div class="usage-bar"><div class="usage-fill" style="width:${r.usagePct || 0}%"></div></div>
-      </td>
-      <td class="actions">
-        <button onclick="editResource(${r.id})">Edit</button>
-        <button onclick="deleteResource(${r.id})">Del</button>
-      </td>
-    </tr>`).join("");
-  return `
-    <div class="card">
-      <h3>AI & Hosting Resources</h3>
-      <div class="search">
-        <input type="text" placeholder="Search name or vendor..." value="${state.search}" oninput="state.search=this.value;render()">
-        <button class="primary export-btn" onclick="exportData()">Export JSON</button>
-      </div>
-      <table><thead><tr><th>Name</th><th>Vendor</th><th>Cost</th><th>Renewal</th><th>Usage</th><th>Actions</th></tr></thead>
-      <tbody>${rows || '<tr><td colspan="6">No matches</td></tr>'}</tbody></table>
-      <button class="primary" onclick="addResource()">+ Add Resource</button>
-    </div>
-  `;
+  if (state.view === "ideas") main.innerHTML = renderIdeas();
+  else if (state.view === "saved") main.innerHTML = renderSaved();
+  else main.innerHTML = renderAbout();
 }
 
 function renderIdeas() {
-  return `<div class="grid">${IDEAS.map((idea, i) => `
-    <div class="card">
-      <h3>${idea.title}</h3>
-      <span class="badge ${idea.speed >= 5 ? "high" : idea.speed >= 4 ? "med" : "low"}">Speed ${idea.speed}/5</span>
-      <p><strong>Problem:</strong> ${idea.problem}</p>
-      <p><strong>Offer:</strong> ${idea.offer}</p>
-      <p><strong>Price:</strong> $${idea.price} &nbsp; <strong>Path:</strong> ${idea.revenuePath}</p>
-      <p><strong>Tools:</strong> ${idea.tools.join(", ")}</p>
-      <p><strong>First steps:</strong> ${idea.firstSteps}</p>
-      <div class="actions">
-        ${idea.paymentLink ? `<a href="${idea.paymentLink}" target="_blank" class="primary">Buy Now — $${idea.price}</a>` : ""}
-        <button class="primary" onclick="startSprint(${i})">Start 10-day Sprint</button>
+  const sorted = [...IDEAS].sort((a, b) => b.score - a.score);
+  return sorted.map(idea => {
+    const isOpen = state.openPlan === idea.id;
+    const plan = PLANS[idea.id];
+    const scoreClass = idea.score >= 9 ? "" : "med";
+    return `
+      <div class="idea-card">
+        <div class="idea-header">
+          <div>
+            <h2 class="idea-title">${idea.title}</h2>
+            <div class="meta">${idea.sources}</div>
+          </div>
+          <span class="score ${scoreClass}">${idea.score.toFixed(1)} speed</span>
+        </div>
+        <p class="problem"><strong>Problem:</strong> ${idea.problem}</p>
+        <p>${idea.oneLiner}</p>
+        <p class="price">${idea.price} · ${idea.revenueRange}</p>
+        <p class="meta">${idea.speedReason}</p>
+        <div class="actions">
+          <button class="primary" onclick="togglePlan('${idea.id}')">${isOpen ? "Hide Plan" : "Generate Plan"}</button>
+          <button class="secondary" onclick="saveIdea('${idea.id}')">${state.saved.includes(idea.id) ? "Saved" : "Save"}</button>
+        </div>
+        ${isOpen && plan ? `
+          <div class="plan-panel">
+            <h3>Execution Plan</h3>
+            <div class="plan-section"><strong>Possible Solution</strong>${plan.solution}</div>
+            <div class="plan-section"><strong>Expected Revenue</strong>${plan.expectedRevenue}</div>
+            <div class="plan-section"><strong>Path to Market</strong>${plan.pathToMarket}</div>
+            <div class="plan-section"><strong>Client Acquisition</strong>${plan.clientAcquisition}</div>
+            <div class="plan-section"><strong>Timeline</strong>${plan.timeline}</div>
+            <div class="plan-section"><strong>Tools / Stack</strong>${plan.tools}</div>
+            <div class="plan-section"><strong>First 7 Days</strong>${plan.first7Days}</div>
+            <div class="plan-section"><strong>Risks</strong>${plan.risks}</div>
+          </div>
+        ` : ""}
       </div>
-    </div>`).join("")}</div>`;
+    `;
+  }).join("");
 }
 
-function renderSprints() {
-  return `<div class="card"><h3>10-Day Sprint Template</h3>
-    <ol>
-      <li><strong>Days 1-2 Validate:</strong> Talk to 10 potential buyers. Get 3 pre-orders or clear "I would pay" signals. Kill if none.</li>
-      <li><strong>Days 3-6 Build:</strong> Use Claude/ChatGPT/Gemini to produce the asset or service materials. Host on Hostinger if needed.</li>
-      <li><strong>Days 7-8 Launch:</strong> Share the Stripe Payment Link + simple landing page. Post in 3 communities where buyers already are.</li>
-      <li><strong>Days 9-10 Learn:</strong> Log results in Ledger. Double down or kill based on real sales.</li>
-    </ol>
-    <p>All work stays inside existing subscriptions. No new spend required.</p>
-    <button class="primary" onclick="state.activeTab='ideas';render()">Back to Ideas</button>
-  </div>`;
+function renderSaved() {
+  if (!state.saved.length) return `<div class="empty">No plans saved yet. Generate and save ideas from the Top Ideas view.</div>`;
+  const items = state.saved.map(id => IDEAS.find(i => i.id === id)).filter(Boolean);
+  return items.map(idea => `
+    <div class="idea-card">
+      <h2 class="idea-title">${idea.title}</h2>
+      <p>${idea.oneLiner}</p>
+      <div class="actions">
+        <button class="primary" onclick="state.view='ideas'; state.openPlan='${idea.id}'; render();">Open Full Plan</button>
+        <button class="secondary" onclick="unsave('${idea.id}')">Remove</button>
+      </div>
+    </div>
+  `).join("");
 }
 
-function renderLedger() {
-  let rows = state.ledger.map((e, i) => `<tr><td>${e.date}</td><td>${e.type}</td><td>$${e.amount}</td><td>${e.note || ""}</td><td><button onclick="deleteLedger(${i})">Del</button></td></tr>`).join("");
-  return `<div class="card"><h3>Ledger</h3>
-    <table><thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Note</th><th></th></tr></thead><tbody>${rows || '<tr><td colspan="5">No entries yet</td></tr>'}</tbody></table>
-    <form onsubmit="addLedger(event)">
-      <select name="type"><option>revenue</option><option>cost</option></select>
-      <input name="amount" type="number" step="0.01" placeholder="Amount" required>
-      <input name="note" placeholder="Note / source">
-      <button class="primary">Add Entry</button>
-    </form>
-    <button class="primary" onclick="exportData()" style="margin-top:0.5rem">Export All Data</button>
-  </div>`;
+function renderAbout() {
+  return `
+    <div class="about">
+      <h2>How MoosingAI Works</h2>
+      <p>MoosingAI surfaces small, real problems people are actively discussing on Reddit and X, then ranks them by how quickly you can turn them into revenue with tools you already have.</p>
+      <p>Ideas are scored on:</p>
+      <ul>
+        <li>Clarity and urgency of the pain</li>
+        <li>Willingness to pay (money already being lost or time already being spent)</li>
+        <li>Speed to first sale (can you offer something in days, not months?)</li>
+        <li>Fit with existing AI tools (Claude, ChatGPT, Gemini, simple automation)</li>
+      </ul>
+      <p>Select any idea and hit <strong>Generate Plan</strong> for a concrete execution path: solution shape, revenue model, client acquisition channels, timeline, and first-week actions.</p>
+      <p>All data stays in your browser. Saved plans are stored locally.</p>
+      <p class="meta" style="margin-top:1.5rem;">Last public signal scan: 28 October 2026. Refresh ideas periodically by re-running scans of r/smallbusiness, trade subreddits, and relevant X searches.</p>
+    </div>
+  `;
 }
 
-function addLedger(e) {
-  e.preventDefault();
-  const f = e.target;
-  state.ledger.push({ date: new Date().toISOString().slice(0,10), type: f.type.value, amount: parseFloat(f.amount.value), note: f.note.value });
-  save(); render();
-}
-
-function deleteLedger(i) {
-  if (confirm("Delete this entry?")) {
-    state.ledger.splice(i, 1);
-    save(); render();
-  }
-}
-
-function startSprint(i) {
-  alert(`Sprint started for: ${IDEAS[i].title}\n\nOpen Inventory and mark the tools you'll use. Log pre-orders in Ledger. Ship the smallest version by day 7.`);
-  state.activeTab = "sprints";
+function togglePlan(id) {
+  state.openPlan = state.openPlan === id ? null : id;
   render();
 }
 
-function addResource() {
-  const name = prompt("Resource name");
-  if (!name) return;
-  state.resources.push({ id: Date.now(), name, vendor: "", monthlyCost: 0, usagePct: 0, capabilities: [] });
-  save(); render();
-}
-
-function editResource(id) {
-  const r = state.resources.find(x => x.id === id);
-  if (!r) return;
-  const usage = prompt("Usage % (0-100)", r.usagePct);
-  if (usage !== null) r.usagePct = Math.min(100, Math.max(0, parseInt(usage) || 0));
-  const cost = prompt("Monthly cost $", r.monthlyCost);
-  if (cost !== null) r.monthlyCost = parseFloat(cost) || 0;
-  const renewal = prompt("Renewal date (YYYY-MM-DD)", r.renewal || "");
-  if (renewal !== null) r.renewal = renewal;
-  save(); render();
-}
-
-function deleteResource(id) {
-  if (confirm("Delete this resource?")) {
-    state.resources = state.resources.filter(r => r.id !== id);
-    save(); render();
+function saveIdea(id) {
+  if (!state.saved.includes(id)) {
+    state.saved.push(id);
+    saveState();
   }
+  render();
 }
 
-function exportData() {
-  const data = { resources: state.resources, ledger: state.ledger, exported: new Date().toISOString() };
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "moosingai-data.json";
-  a.click();
+function unsave(id) {
+  state.saved = state.saved.filter(x => x !== id);
+  saveState();
+  render();
 }
 
 document.querySelectorAll("nav button").forEach(b => {
-  b.onclick = () => { state.activeTab = b.dataset.tab; render(); };
+  b.onclick = () => {
+    state.view = b.dataset.view;
+    state.openPlan = null;
+    render();
+  };
 });
 
 render();
-updateProgress();
