@@ -1,0 +1,8 @@
+server/config.local.php
+storage/
+vendor/
+node_modules/
+.env*
+!environment.example
+artifacts/
+*.zip

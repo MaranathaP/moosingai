@@ -1,0 +1,10 @@
+# Names only. PHP uses server/config.local.php, excluded from Git.
+MOOSING_CONFIG=
+# Configuration keys:
+# environment = local | staging | production
+# base_url = canonical HTTPS application URL
+# database = absolute SQLite path OUTSIDE public_html
+# password_hash = password_hash() output; never a plaintext password
+# stripe_key = least-privilege sandbox restricted key
+# stripe_webhook_secret = endpoint-specific signing secret
+# Live keys and live selling are intentionally rejected by this release.

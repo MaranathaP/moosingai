@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="MoosingAI is a small venture studio turning specific recurring problems into useful products."
+    />
+    <title>MoosingAI — Evidence before effort</title>
+    <link rel="stylesheet" href="workspace.css" />
+    <script src="workspace.js" defer></script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <div id="app">
+      <main id="main"><p role="status">Loading MoosingAI…</p></main>
+    </div>
+    <div id="notice" role="status" aria-live="polite"></div>
+    <dialog id="editor">
+      <form id="edit-form">
+        <div id="fields"></div>
+        <footer>
+          <button type="button" id="cancel">Cancel</button
+          ><button class="primary" type="submit">Save record</button>
+        </footer>
+        <p id="form-error" role="alert"></p>
+      </form>
+    </dialog>
+  </body>
+</html>
