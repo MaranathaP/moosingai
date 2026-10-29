@@ -1,0 +1,7 @@
+DirectoryIndex index.php
+Options -Indexes
+RewriteEngine On
+RewriteRule ^(?:server|storage|vendor|tests|scripts|docs|\.git)(?:/|$) - [F,L]
+<FilesMatch "(^\.|\.sql$|\.md$|\.json$|\.lock$|\.zip$|\.sqlite(?:-wal|-shm)?$)">
+Require all denied
+</FilesMatch>

@@ -1,0 +1,15 @@
+PRAGMA foreign_keys = ON;
+CREATE TABLE IF NOT EXISTS migrations (version INTEGER PRIMARY KEY);
+CREATE TABLE IF NOT EXISTS opportunities (id TEXT PRIMARY KEY, title TEXT NOT NULL, data TEXT NOT NULL, stage TEXT NOT NULL DEFAULT 'Investigating', created_at TEXT NOT NULL, updated_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS evidence (id TEXT PRIMARY KEY, source TEXT NOT NULL, source_id TEXT, canonical_url TEXT, fingerprint TEXT NOT NULL UNIQUE, content_hash TEXT NOT NULL UNIQUE, data TEXT NOT NULL, collected_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS evidence_links (opportunity_id TEXT NOT NULL REFERENCES opportunities(id), evidence_id TEXT NOT NULL REFERENCES evidence(id), PRIMARY KEY(opportunity_id,evidence_id));
+CREATE TABLE IF NOT EXISTS records (id TEXT PRIMARY KEY, kind TEXT NOT NULL, opportunity_id TEXT REFERENCES opportunities(id), data TEXT NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS history (id TEXT PRIMARY KEY, opportunity_id TEXT NOT NULL REFERENCES opportunities(id), kind TEXT NOT NULL, data TEXT NOT NULL, created_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS sources (id TEXT PRIMARY KEY, enabled INTEGER NOT NULL DEFAULT 0, last_success TEXT, last_error TEXT, next_run INTEGER NOT NULL DEFAULT 0, quota_remaining INTEGER, daily_limit INTEGER NOT NULL DEFAULT 5);
+CREATE TABLE IF NOT EXISTS jobs (id TEXT PRIMARY KEY, source_id TEXT NOT NULL REFERENCES sources(id), profile_id TEXT NOT NULL REFERENCES records(id), status TEXT NOT NULL, attempts INTEGER NOT NULL DEFAULT 0, added INTEGER NOT NULL DEFAULT 0, error TEXT, created_at TEXT NOT NULL, completed_at TEXT, lease_until INTEGER NOT NULL DEFAULT 0);
+CREATE TABLE IF NOT EXISTS checkouts (id TEXT PRIMARY KEY, offer_id TEXT NOT NULL REFERENCES records(id), product_id TEXT NOT NULL REFERENCES records(id), experiment_id TEXT NOT NULL REFERENCES records(id), amount INTEGER NOT NULL, currency TEXT NOT NULL, mode TEXT NOT NULL CHECK(mode IN ('sandbox','live')), session_id TEXT UNIQUE, payment_intent TEXT UNIQUE, state TEXT NOT NULL DEFAULT 'pending', refunded INTEGER NOT NULL DEFAULT 0, customer_id TEXT, fulfilled_at TEXT, created_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS payment_events (id TEXT PRIMARY KEY, mode TEXT NOT NULL, type TEXT NOT NULL, received_at TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS refunds (payment_intent TEXT PRIMARY KEY, amount INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS login_attempts (bucket TEXT PRIMARY KEY, attempts INTEGER NOT NULL DEFAULT 0, reset_at INTEGER NOT NULL);
+INSERT OR IGNORE INTO sources(id) VALUES ('stackexchange');
+INSERT OR IGNORE INTO migrations(version) VALUES (1);

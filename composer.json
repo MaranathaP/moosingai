@@ -1,0 +1,11 @@
+{
+  "name": "moosingai/workspace",
+  "description": "Private evidence-to-paid-pilot workspace",
+  "require": {
+    "php": "^8.3",
+    "ext-pdo": "*",
+    "ext-pdo_sqlite": "*",
+    "ext-curl": "*",
+    "stripe/stripe-php": "^22.0"
+  }
+}
