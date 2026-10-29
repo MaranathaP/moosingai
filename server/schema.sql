@@ -2,6 +2,7 @@ PRAGMA foreign_keys = ON;
 CREATE TABLE IF NOT EXISTS migrations (version INTEGER PRIMARY KEY);
 CREATE TABLE IF NOT EXISTS opportunities (id TEXT PRIMARY KEY, title TEXT NOT NULL, data TEXT NOT NULL, stage TEXT NOT NULL DEFAULT 'Investigating', created_at TEXT NOT NULL, updated_at TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS evidence (id TEXT PRIMARY KEY, source TEXT NOT NULL, source_id TEXT, canonical_url TEXT, fingerprint TEXT NOT NULL UNIQUE, content_hash TEXT NOT NULL UNIQUE, data TEXT NOT NULL, collected_at TEXT NOT NULL);
+CREATE UNIQUE INDEX IF NOT EXISTS evidence_canonical_url ON evidence(canonical_url) WHERE canonical_url IS NOT NULL;
 CREATE TABLE IF NOT EXISTS evidence_links (opportunity_id TEXT NOT NULL REFERENCES opportunities(id), evidence_id TEXT NOT NULL REFERENCES evidence(id), PRIMARY KEY(opportunity_id,evidence_id));
 CREATE TABLE IF NOT EXISTS records (id TEXT PRIMARY KEY, kind TEXT NOT NULL, opportunity_id TEXT REFERENCES opportunities(id), data TEXT NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS history (id TEXT PRIMARY KEY, opportunity_id TEXT NOT NULL REFERENCES opportunities(id), kind TEXT NOT NULL, data TEXT NOT NULL, created_at TEXT NOT NULL);

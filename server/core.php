@@ -225,8 +225,8 @@ function addEvidence(PDO $db, array $data, string $method = "manual"): array
     );
     $existing = query(
         $db,
-        "SELECT id FROM evidence WHERE fingerprint=? OR content_hash=?",
-        [$fingerprint, $hash],
+        "SELECT id FROM evidence WHERE fingerprint=? OR content_hash=? OR (canonical_url=? AND canonical_url IS NOT NULL)",
+        [$fingerprint, $hash, $u ?: null],
     )->fetchColumn();
     if ($existing) {
         return ["id" => $existing, "inserted" => false];
@@ -382,6 +382,14 @@ function saveRecord(PDO $db, array $input): array
         need(
             !isset($data["revenue"]) && !isset($data["paid_customers"]),
             "Revenue comes from verified payments",
+        );
+        need(
+            (bool) query(
+                $db,
+                "SELECT 1 FROM records WHERE id=? AND kind='experiment' AND opportunity_id=?",
+                [$data["experiment_id"] ?? "", $opportunity],
+            )->fetchColumn(),
+            "Link the originating experiment for this opportunity",
         );
     }
     query(

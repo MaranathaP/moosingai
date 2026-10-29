@@ -51,6 +51,24 @@ try {
     $a = addEvidence($db, $ev);
     $b = addEvidence($db, [...$ev, "url" => "https://example.com/report"]);
     check($a["inserted"] && !$b["inserted"], "canonical URL deduplicates");
+    $alias = addEvidence($db, [
+        ...$ev,
+        "source" => "Different importer",
+        "source_id" => "another-id",
+        "note" => "Revised title for the same original",
+        "url" => "https://example.com/report",
+    ]);
+    check(
+        !$alias["inserted"] && $alias["id"] === $a["id"],
+        "canonical URL deduplicates across source IDs and changed titles",
+    );
+    rejects(
+        fn() => saveOpportunity($db, [
+            "title" => "Unsupported fresh assessment",
+            "assessment" => ["pain" => ["rating" => 4, "evidence_ids" => []]],
+        ]),
+        "new opportunity cannot insert unsupported ratings",
+    );
     $c = addEvidence($db, [...$ev, "url" => "https://example.com/repost"]);
     check(!$c["inserted"], "reposted content deduplicates");
     linkEvidence($db, $id, $a["id"]);
@@ -210,15 +228,18 @@ try {
         ]),
         "live offers disabled",
     );
-    $product = saveRecord($db, [
-        "kind" => "product",
-        "opportunity_id" => $id,
-        "data" => ["title" => "SANDBOX product"],
-    ]);
     $experiment = saveRecord($db, [
         "kind" => "experiment",
         "opportunity_id" => $id,
         "data" => ["title" => "SANDBOX experiment"],
+    ]);
+    $product = saveRecord($db, [
+        "kind" => "product",
+        "opportunity_id" => $id,
+        "data" => [
+            "title" => "SANDBOX product",
+            "experiment_id" => $experiment["id"],
+        ],
     ]);
     $checkout = uid();
     query(

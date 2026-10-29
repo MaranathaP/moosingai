@@ -463,9 +463,21 @@ function recordForm(kind, opportunity = "", id = "") {
               "terms",
             ].includes(k)
               ? "textarea"
-              : "text",
+              : ["experiment_id", "product_id"].includes(k)
+                ? "select"
+                : "text",
             (k === "schedule" ? (d[k] ? "yes" : "") : d[k]) ??
               (k === "currency" ? "usd" : ""),
+            ["experiment_id", "product_id"].includes(k)
+              ? data.records
+                  .filter(
+                    (r) =>
+                      r.kind ===
+                        (k === "experiment_id" ? "experiment" : "product") &&
+                      (!opportunity || r.opportunity_id === opportunity),
+                  )
+                  .map((r) => r.id)
+              : [],
           ),
         )
         .join(""),
